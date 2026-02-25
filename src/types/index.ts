@@ -1,5 +1,5 @@
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
-export type TPayment = 'card' | 'cash';
+export type TPayment = 'card' | 'cash' | '';
 export type ValidationErrors = {
     payment?: string;
     email?: string;
@@ -39,5 +39,6 @@ export interface IOrderResult {
 }
 
 export interface IProductsResponse {
+    total: number;
     items: IProduct[];
 }

@@ -7,15 +7,15 @@ import {
 } from '../../types';
 
 export class Communication {
-    _api: IApi;
+    private api: IApi;
 
     constructor(api: IApi) {
-        this._api = api;
+        this.api = api;
     }
 
     async getProductList(): Promise<IProduct[]> {
         try {
-            const response = await this._api.get<IProductsResponse>('/product/');
+            const response = await this.api.get<IProductsResponse>('/product/');
             return response.items;
         } catch (error) {
             console.error('Ошибка при загрузке товаров:', error);
@@ -25,7 +25,7 @@ export class Communication {
 
     async postOrder(orderData: IOrder): Promise<IOrderResult> {
         try {
-            const response = await this._api.post<IOrderResult>('/order/', orderData);
+            const response = await this.api.post<IOrderResult>('/order/', orderData);
             return response;
         } catch (error) {
             console.error('Ошибка при отправке заказа:', error);
