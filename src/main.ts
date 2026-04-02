@@ -119,23 +119,21 @@ function openBasketModal(): void {
   });
 }
 
-function openOrderModal(): void {
+function buildOrderFormContent(): HTMLElement {
   const form = new FormOrder(cloneTemplate(orderTemplate), events);
   const buyerData = buyerModel.getData();
   const errors = buyerModel.validate();
   const hasOrderInput = Boolean(buyerData.payment || buyerData.address.trim());
 
-  modal.render({
-    content: form.render({
-      payment: buyerData.payment,
-      address: buyerData.address,
-      valid: !errors.payment && !errors.address,
-      errors: hasOrderInput ? getOrderErrors(errors) : '',
-    }),
+  return form.render({
+    payment: buyerData.payment,
+    address: buyerData.address,
+    valid: !errors.payment && !errors.address,
+    errors: hasOrderInput ? getOrderErrors(errors) : '',
   });
 }
 
-function openContactsModal(): void {
+function buildContactsFormContent(): HTMLElement {
   const form = new FormContacts(cloneTemplate(contactsTemplate), events);
   const buyerData = buyerModel.getData();
   const errors = buyerModel.validate();
@@ -146,19 +144,15 @@ function openContactsModal(): void {
   form.valid = !errors.email && !errors.phone;
   form.errors = hasContactsInput ? getContactsErrors(errors) : '';
 
-  modal.render({
-    content: form.render(),
-  });
+  return form.render();
 }
 
-function openSuccessModal(total: number): void {
-  const success = new Success(cloneTemplate(successTemplate), {
-    onClick: events.trigger('success:close'),
-  });
+function openOrderModal(): void {
+  modal.render({ content: buildOrderFormContent() });
+}
 
-  modal.render({
-    content: success.render({ total }),
-  });
+function openContactsModal(): void {
+  modal.render({ content: buildContactsFormContent() });
 }
 
 function updateModalFormState(
@@ -199,6 +193,11 @@ function updateOrderFormInModal(): void {
     return;
   }
 
+  const addressInput = formElement.querySelector<HTMLInputElement>('input[name="address"]');
+  if (addressInput && addressInput.value !== buyerData.address) {
+    addressInput.value = buyerData.address;
+  }
+
   const cardButton = formElement.querySelector<HTMLButtonElement>('button[name="card"]');
   const cashButton = formElement.querySelector<HTMLButtonElement>('button[name="cash"]');
 
@@ -216,11 +215,35 @@ function updateContactsFormInModal(): void {
   const errors = buyerModel.validate();
   const hasContactsInput = Boolean(buyerData.email.trim() || buyerData.phone.trim());
 
-  updateModalFormState(
+  const formElement = updateModalFormState(
     'contacts',
     !errors.email && !errors.phone,
     hasContactsInput ? getContactsErrors(errors) : ''
   );
+  if (!formElement) {
+    return;
+  }
+
+  const emailInput = formElement.querySelector<HTMLInputElement>('input[name="email"]');
+  const phoneInput = formElement.querySelector<HTMLInputElement>('input[name="phone"]');
+
+  if (emailInput && emailInput.value !== buyerData.email) {
+    emailInput.value = buyerData.email;
+  }
+
+  if (phoneInput && phoneInput.value !== buyerData.phone) {
+    phoneInput.value = buyerData.phone;
+  }
+}
+
+function openSuccessModal(total: number): void {
+  const success = new Success(cloneTemplate(successTemplate), {
+    onClick: events.trigger('success:close'),
+  });
+
+  modal.render({
+    content: success.render({ total }),
+  });
 }
 
 events.on<{ items: IProduct[] }>('catalog:changed', () => {
