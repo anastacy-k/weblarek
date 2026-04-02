@@ -1,13 +1,10 @@
 import { categoryMap } from "../../../utils/constants";
 import { CategoryKey } from "../../../types";
 import { ensureElement } from "../../../utils/utils";
-import { IProduct } from "../../../types";
+import { TCardPreview } from "../../../types";
 import { ICardActions } from "../../../types";
 import { Card } from "./Card";
 
-export type TCardPreview = Pick<IProduct, 'image' | 'category' | 'title' | 'description' | 'price'> & {
-  buttonText: string;
-}
 
 export class CardPreview extends Card<TCardPreview> {
   protected imageElement: HTMLImageElement;

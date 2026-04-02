@@ -10,6 +10,9 @@ export type ValidationErrors = {
 }
 export type CategoryKey = keyof typeof categoryMap;
 export type TCardCatalog = Pick<IProduct, 'image' | 'category'>
+export type TCardPreview = Pick<IProduct, 'image' | 'category' | 'title' | 'description' | 'price'> & {
+  buttonText: string;
+}
 
 export interface IApi {
     get<T extends object>(uri: string): Promise<T>;
@@ -63,3 +66,30 @@ export interface IFormOrder {
     valid: boolean;
 }
 
+export interface IModal {
+  content: HTMLElement;
+}
+
+export interface ISuccess {
+  total: number;
+}
+
+export interface ICardBasket {
+  index: number;
+  title: string;
+  price: number;
+}
+
+export interface IBasketView {
+    items: HTMLElement[];
+    total: number;
+    selected: string[];
+}
+
+export interface IGallery {
+  catalog: HTMLElement[];
+}
+
+export interface IHeader {
+  counter: number;
+}

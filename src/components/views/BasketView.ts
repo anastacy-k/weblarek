@@ -1,12 +1,9 @@
-import { ICardActions } from "../../types";
 import { ensureElement } from "../../utils/utils";
+import { 
+    ICardActions, 
+    IBasketView 
+} from "../../types";
 import { Component } from "../base/Component";
-
-export interface IBasketView {
-    items: HTMLElement[];
-    total: number;
-    selected: string[];
-}
 
 export class BasketView extends Component<IBasketView> {
     protected listElement: HTMLElement;

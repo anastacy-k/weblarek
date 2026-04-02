@@ -3,7 +3,6 @@ import { IFormContacts } from "../../../types";
 import { IEvents } from "../../base/Events";
 import { Form } from "./Form";
 
-
 export class FormContacts extends Form<IFormContacts> {
   protected emailInput: HTMLInputElement;
   protected phoneInput: HTMLInputElement;

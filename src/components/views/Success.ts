@@ -1,9 +1,6 @@
 import { ensureElement } from "../../utils/utils";
+import { ISuccess } from "../../types";
 import { Component } from "../base/Component";
-
-export interface ISuccess {
-  total: number;
-}
 
 export class Success extends Component<ISuccess> {
   protected closeButton: HTMLButtonElement;
