@@ -1,12 +1,23 @@
 import './scss/styles.scss';
+import { IBuyer } from './types';
+import { Api } from './components/base/Api';
+import { 
+    API_URL,
+    cardCatalogTemplate,
+    CDN_URL
+} from './utils/constants';
+import { apiProducts } from './utils/data';
+import { 
+    ensureElement,
+    cloneTemplate
+} from './utils/utils';
 import { Catalog } from './components/base/models/Catalog';
 import { Basket } from './components/base/models/Basket';
 import { Buyer } from './components/base/models/Buyer';
 import { Communication } from './components/base/Communication';
-import { Api } from './components/base/Api';
-import { API_URL } from './utils/constants';
-import { apiProducts } from './utils/data';
-import { IBuyer } from './types';
+import { EventEmitter } from './components/base/Events';
+import { Gallery } from './components/views/Gallery';
+import { CardCatalog } from './components/views/card/CardCatalog';
 
 const testCatalogModel = new Catalog();
 console.log('--- Каталог товаров ---')
@@ -48,19 +59,51 @@ console.log('Валидация данных после их очистки: ', 
 
 const baseApi = new Api(API_URL);
 const communication = new Communication(baseApi);
+const events = new EventEmitter();
 const productsModel = new Catalog();
+const galleryElement = ensureElement<HTMLElement>('.gallery');
+const gallery = new Gallery(galleryElement);
+
+function getItemCards() {
+  return productsModel.getItems().map((item) => {
+    const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
+      onClick: () => events.emit('card:select', item),
+    });
+    return card.render({
+        ...item,
+        image: `${CDN_URL}${item.image}`,
+      });
+  });
+}
 
 async function loadProductsFromServer() {
-    try {
-        const products = await communication.getProductList();
-        
-        productsModel.setItems(products);
-        
-        console.log('Товары в модели:', productsModel.getItems());
-        console.log(`Количество: ${productsModel.getItems().length}`);
-    } catch (error) {
-        console.error('Ошибка при загрузке товаров с сервера:', error);
-    }
+  try {
+    const products = await communication.getProductList();
+    productsModel.setItems(products);
+    gallery.render({ catalog: getItemCards() });
+  } catch (error) {
+    console.error('Ошибка при загрузке товаров с сервера:', error);
+  }
 }
 
 loadProductsFromServer();
+
+// async function loadProductsFromServer() {
+//     try {
+//         const products = await communication.getProductList();
+        
+//         productsModel.setItems(products);
+
+//         console.log('Товары в модели:', productsModel.getItems());
+//         console.log(`Количество: ${productsModel.getItems().length}`);
+//     } catch (error) {
+//         console.error('Ошибка при загрузке товаров с сервера:', error);
+//     }
+// }
+
+// communication
+//     .getProductList()
+//     .then((data) => {
+//         productsModel.setItems(data.item)
+//     })
+//     .catch((err) => {console.error(err)})

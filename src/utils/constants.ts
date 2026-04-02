@@ -1,3 +1,4 @@
+import { ensureElement } from "./utils";
 /* Константа для получения полного пути для сервера. Для выполнения запроса 
 необходимо к API_URL добавить только ендпоинт. */
 export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`; 
@@ -20,3 +21,10 @@ export const settings = {
 
 };
 
+export const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+export const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+export const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
+export const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+export const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
+export const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+export const successTemplate = ensureElement<HTMLTemplateElement>('#success');

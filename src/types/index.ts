@@ -1,3 +1,5 @@
+import { categoryMap } from "../utils/constants";
+
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 export type TPayment = 'card' | 'cash' | '';
 export type ValidationErrors = {
@@ -6,6 +8,8 @@ export type ValidationErrors = {
     phone?: string;
     address?: string;
 }
+export type CategoryKey = keyof typeof categoryMap;
+export type TCardCatalog = Pick<IProduct, 'image' | 'category'>
 
 export interface IApi {
     get<T extends object>(uri: string): Promise<T>;
@@ -42,3 +46,20 @@ export interface IProductsResponse {
     total: number;
     items: IProduct[];
 }
+
+export interface ICardActions {
+    onClick: (event: MouseEvent) => void;
+}
+
+export interface IFormContacts {
+    email: string;
+    phone: string;
+}
+
+export interface IFormOrder {
+    payment: TPayment;
+    address: string;
+    errors: string;
+    valid: boolean;
+}
+
