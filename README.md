@@ -132,6 +132,24 @@ interface IBuyer {
 }
 ```
 
+#### Полный список ключевых типов и интерфейсов
+
+`CategoryKey = keyof typeof categoryMap` — ключи словаря категорий.
+`TCardCatalog = Pick<IProduct, 'image' | 'category'>` — данные карточки в каталоге.
+`TCardPreview = Pick<IProduct, 'image' | 'category' | 'title' | 'description' | 'price'> & { buttonText: string }` — данные карточки в модальном превью.
+
+Типы для View-компонентов:
+
+`ICardActions` — обработчик пользовательского действия: `onClick(event: MouseEvent)`.
+`IFormOrder` — данные формы первого шага (`payment`, `address`, `errors`, `valid`).
+`IFormContacts` — данные формы второго шага (`email`, `phone`).
+`IModal` — данные модального окна (`content: HTMLElement`).
+`ISuccess` — данные экрана успешной оплаты (`total`).
+`ICardBasket` — строка товара в корзине (`index`, `title`, `price`).
+`IBasketView` — состояние корзины (`items`, `total`, `selected`).
+`IGallery` — список карточек каталога (`catalog: HTMLElement[]`).
+`IHeader` — состояние шапки (`counter`).
+
 ### Модели данных
 
 #### Класс Catalog (Каталог товаров)
