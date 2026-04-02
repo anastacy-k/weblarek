@@ -5,7 +5,9 @@ import { IProduct } from "../../../types";
 import { ICardActions } from "../../../types";
 import { Card } from "./Card";
 
-export type TCardPreview = Pick<IProduct, 'image' | 'category' | 'title' | 'description' | 'price'>
+export type TCardPreview = Pick<IProduct, 'image' | 'category' | 'title' | 'description' | 'price'> & {
+  buttonText: string;
+}
 
 export class CardPreview extends Card<TCardPreview> {
   protected imageElement: HTMLImageElement;
@@ -52,5 +54,9 @@ export class CardPreview extends Card<TCardPreview> {
     } else {
       this.buttonElement.disabled = false;
     }
+  }
+
+  set buttonText(value: string) {
+    this.buttonElement.textContent = value;
   }
 }
