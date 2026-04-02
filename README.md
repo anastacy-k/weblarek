@@ -403,7 +403,7 @@ type ValidationResult = {
 
 ### События приложения
 
-Ниже перечислены события, которые генерируются в слое представления при действиях пользователя и при изменении состояния интерфейса:
+Ниже перечислены события, которые генерируются в приложении слоем представления и моделями данных:
 
 `basket:open` — клик по кнопке корзины в `Header`.
 `modal:open` — открытие модального окна в `Modal`.
@@ -413,5 +413,9 @@ type ValidationResult = {
 `order:submit` — отправка формы заказа в `FormOrder`; передаются данные `{ payment: TPayment, address: string }`.
 `contacts:change` — изменение email или телефона в `FormContacts`; передаются частичные данные `{ email?: string, phone?: string }`.
 `contacts:submit` — отправка формы контактов в `FormContacts`; передаются данные `{ email: string, phone: string }`.
+`catalog:changed` — изменение списка товаров в модели `Catalog`; передаются данные `{ items: IProduct[] }`.
+`catalog:selected` — изменение выбранного товара в модели `Catalog`; передаются данные `{ item: IProduct | null }`.
+`basket:changed` — изменение состава корзины в модели `Basket`; передаются данные `{ items: IProduct[] }`.
+`buyer:changed` — изменение данных покупателя в модели `Buyer`; передаются полные данные покупателя `IBuyer`.
 
 Также в ряде компонентов (`CardCatalog`, `CardPreview`, `CardBasket`, `BasketView`, `Success`) при действиях пользователя вызывается обработчик `actions.onClick`, полученный в конструкторе. В этом обработчике Презентер должен сгенерировать соответствующее событие через брокер событий.
