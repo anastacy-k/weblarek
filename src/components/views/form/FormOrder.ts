@@ -41,10 +41,22 @@ export class FormOrder extends Form<IFormOrder> {
     this.container.addEventListener('submit', (e) => {
       e.preventDefault();
       this.events.emit('order:submit', {
-        payment: this.payment,
+        payment: this.resolvePayment(),
         address: this.addressInput.value.trim(),
       });
     });
+  }
+
+  protected resolvePayment(): TPayment {
+    if (this.cardButton.classList.contains('button_alt-active')) {
+      return 'card';
+    }
+
+    if (this.cashButton.classList.contains('button_alt-active')) {
+      return 'cash';
+    }
+
+    return '';
   }
 
   set payment(value: TPayment) {

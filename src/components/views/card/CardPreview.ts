@@ -14,7 +14,7 @@ export class CardPreview extends Card<TCardPreview> {
   protected buttonElement: HTMLButtonElement;
 
   constructor(container: HTMLElement, actions?: ICardActions) {
-    super(container);
+    super(container, actions);
 
     this.imageElement = ensureElement<HTMLImageElement>('.card__image', this.container);
     this.categoryElement = ensureElement<HTMLElement>('.card__category', this.container);
@@ -38,7 +38,7 @@ export class CardPreview extends Card<TCardPreview> {
   }
 
   set image(value: string) {
-    this.setImage(this.imageElement, value, this.title);
+    this.setImage(this.imageElement, value, this.titleElement.textContent ?? '');
   }
 
   set description(value: string) {
