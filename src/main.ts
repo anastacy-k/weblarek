@@ -44,6 +44,8 @@ const galleryElement = ensureElement<HTMLElement>('.gallery');
 const gallery = new Gallery(galleryElement);
 const modalElement = ensureElement<HTMLElement>('#modal-container');
 const modal = new Modal(modalElement, events);
+const orderForm = new FormOrder(cloneTemplate(orderTemplate), events);
+const contactsForm = new FormContacts(cloneTemplate(contactsTemplate), events);
 
 header.render({ counter: 0 });
 
@@ -120,12 +122,11 @@ function openBasketModal(): void {
 }
 
 function buildOrderFormContent(): HTMLElement {
-  const form = new FormOrder(cloneTemplate(orderTemplate), events);
   const buyerData = buyerModel.getData();
   const errors = buyerModel.validate();
   const hasOrderInput = Boolean(buyerData.payment || buyerData.address.trim());
 
-  return form.render({
+  return orderForm.render({
     payment: buyerData.payment,
     address: buyerData.address,
     valid: !errors.payment && !errors.address,
@@ -134,17 +135,16 @@ function buildOrderFormContent(): HTMLElement {
 }
 
 function buildContactsFormContent(): HTMLElement {
-  const form = new FormContacts(cloneTemplate(contactsTemplate), events);
   const buyerData = buyerModel.getData();
   const errors = buyerModel.validate();
   const hasContactsInput = Boolean(buyerData.email.trim() || buyerData.phone.trim());
 
-  form.email = buyerData.email;
-  form.phone = buyerData.phone;
-  form.valid = !errors.email && !errors.phone;
-  form.errors = hasContactsInput ? getContactsErrors(errors) : '';
+  contactsForm.email = buyerData.email;
+  contactsForm.phone = buyerData.phone;
+  contactsForm.valid = !errors.email && !errors.phone;
+  contactsForm.errors = hasContactsInput ? getContactsErrors(errors) : '';
 
-  return form.render();
+  return contactsForm.render();
 }
 
 function openOrderModal(): void {
@@ -153,87 +153,6 @@ function openOrderModal(): void {
 
 function openContactsModal(): void {
   modal.render({ content: buildContactsFormContent() });
-}
-
-function updateModalFormState(
-  formName: 'order' | 'contacts',
-  isValid: boolean,
-  errorsText: string
-): HTMLFormElement | null {
-  const formElement = modalElement.querySelector<HTMLFormElement>(`form[name="${formName}"]`);
-  if (!formElement) {
-    return null;
-  }
-
-  const submitButton = formElement.querySelector<HTMLButtonElement>('button[type="submit"]');
-  const errorsElement = formElement.querySelector<HTMLElement>('.form__errors');
-
-  if (submitButton) {
-    submitButton.disabled = !isValid;
-  }
-
-  if (errorsElement) {
-    errorsElement.textContent = errorsText;
-  }
-
-  return formElement;
-}
-
-function updateOrderFormInModal(): void {
-  const buyerData = buyerModel.getData();
-  const errors = buyerModel.validate();
-  const hasOrderInput = Boolean(buyerData.payment || buyerData.address.trim());
-
-  const formElement = updateModalFormState(
-    'order',
-    !errors.payment && !errors.address,
-    hasOrderInput ? getOrderErrors(errors) : ''
-  );
-  if (!formElement) {
-    return;
-  }
-
-  const addressInput = formElement.querySelector<HTMLInputElement>('input[name="address"]');
-  if (addressInput && addressInput.value !== buyerData.address) {
-    addressInput.value = buyerData.address;
-  }
-
-  const cardButton = formElement.querySelector<HTMLButtonElement>('button[name="card"]');
-  const cashButton = formElement.querySelector<HTMLButtonElement>('button[name="cash"]');
-
-  if (cardButton) {
-    cardButton.classList.toggle('button_alt-active', buyerData.payment === 'card');
-  }
-
-  if (cashButton) {
-    cashButton.classList.toggle('button_alt-active', buyerData.payment === 'cash');
-  }
-}
-
-function updateContactsFormInModal(): void {
-  const buyerData = buyerModel.getData();
-  const errors = buyerModel.validate();
-  const hasContactsInput = Boolean(buyerData.email.trim() || buyerData.phone.trim());
-
-  const formElement = updateModalFormState(
-    'contacts',
-    !errors.email && !errors.phone,
-    hasContactsInput ? getContactsErrors(errors) : ''
-  );
-  if (!formElement) {
-    return;
-  }
-
-  const emailInput = formElement.querySelector<HTMLInputElement>('input[name="email"]');
-  const phoneInput = formElement.querySelector<HTMLInputElement>('input[name="phone"]');
-
-  if (emailInput && emailInput.value !== buyerData.email) {
-    emailInput.value = buyerData.email;
-  }
-
-  if (phoneInput && phoneInput.value !== buyerData.phone) {
-    phoneInput.value = buyerData.phone;
-  }
 }
 
 function openSuccessModal(total: number): void {
@@ -265,13 +184,8 @@ events.on<{ items: IProduct[] }>('basket:changed', () => {
 });
 
 events.on<IBuyer>('buyer:changed', () => {
-  if (modalElement.classList.contains('modal_active') && Boolean(modalElement.querySelector('form[name="order"]'))) {
-    updateOrderFormInModal();
-  }
-
-  if (modalElement.classList.contains('modal_active') && Boolean(modalElement.querySelector('form[name="contacts"]'))) {
-    updateContactsFormInModal();
-  }
+  buildOrderFormContent();
+  buildContactsFormContent();
 });
 
 events.on<{ id: string }>('card:select', ({ id }) => {
